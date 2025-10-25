@@ -1,11 +1,13 @@
--- calculates average_discount based on product discount and selling price in orders
-
-select round((AVG(discount_amount)),2) as average_discount
-from(
-	select 
-		oi.order_id,
-		sum((quantity * list_price)  - (quantity * (list_price * (1 - discount)))) as discount_amount
- 	from order_items oi
- 	group by oi.order_id)
- 	as t;
+-- Calculate average discount per order based on product discount and selling price
+SELECT 
+    ROUND(AVG(discount_amount), 2) AS average_discount
+FROM (
+    SELECT 
+        oi.order_id,
+        SUM(
+            (oi.quantity * oi.list_price) - (oi.quantity * (oi.list_price * (1 - oi.discount)))
+        ) AS discount_amount
+    FROM order_items oi
+    GROUP BY oi.order_id
+) AS t;
  

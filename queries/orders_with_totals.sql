@@ -1,23 +1,25 @@
--- view orders_with_totals shows all orders along with their total order value
+-- Create a view showing all orders along with their total order value
+CREATE VIEW orders_with_totals AS
+SELECT 
+    o.order_id,
+    o.customer_id,
+    o.order_status,
+    o.order_date,
+    o.required_date,
+    o.shipped_date,
+    o.store_id,
+    o.staff_id,
+    ot.total_order_price
+FROM orders o
+JOIN (
+    SELECT 
+        oi.order_id,
+        ROUND(SUM(oi.quantity * (oi.list_price * (1 - oi.discount))), 2) AS total_order_price
+    FROM order_items oi
+    GROUP BY oi.order_id
+) ot 
+    ON o.order_id = ot.order_id;
 
-create view orders_with_totals as
-select 
-o.order_id,
-o.customer_id,
-o.order_status,
-o.order_date,
-o.required_date,
-o.shipped_date,
-o.store_id,
-o.staff_id,
-ot.total_order_price
-from orders o
-join (
-	   SELECT order_id,
-       SUM(quantity * (list_price * (1 - discount))) AS total_order_price
-		FROM order_items oi
-		GROUP BY order_id) ot 
-	on o.order_id = ot.order_id;
-
-select * from orders_with_totals
-	
+-- Retrieve all orders with their total values
+SELECT * 
+FROM orders_with_totals;
